@@ -1,0 +1,224 @@
+<!-- 
+CONFIGURAÇÃO DO GRUNT PARA O PROJETO
+
+1 - Instale o Grunt CLI de forma global:
+    npm install -g grunt-cli
+
+2 - Inicie o npm no projeto:
+    npm init
+
+3 - Instale o Grunt localmente:
+    npm install --save-dev grunt
+
+4 - No package.json, adicione em "scripts":
+    "grunt": "grunt",
+    "build": "grunt build"
+
+5 - Crie o arquivo de configuração com o nome:
+    Gruntfile.js
+
+6 - No Gruntfile.js, inicie com:
+    module.exports = function(grunt) {
+        grunt.initConfig({
+            pkg: grunt.file.readJSON('package.json'),
+        });
+    }
+
+7 - Execute a task padrão para verificar:
+    npm run grunt
+    (Dará erro se não houver uma task default configurada)
+
+────────────────────────────────────
+PLUGIN: LESS (compila arquivos .less para .css)
+
+1 - Instale o plugin:
+    npm install --save-dev grunt-contrib-less
+
+2 - Carregue o plugin no Gruntfile.js:
+    grunt.loadNpmTasks('grunt-contrib-less');
+
+3 - Adicione dentro de grunt.initConfig:
+    less: {
+        development: {
+            files: {
+                'dev/styles/main.css': 'src/styles/main.less'
+            }
+        },
+        production: {
+            options: {
+                compress: true
+            },
+            files: {
+                'dist/styles/main.min.css': 'src/styles/main.less'
+            }
+        }
+    }
+
+────────────────────────────────────
+PLUGIN: WATCH (observa alterações nos arquivos)
+
+1 - Instale o plugin:
+    npm install --save-dev grunt-contrib-watch
+
+2 - Carregue o plugin:
+    grunt.loadNpmTasks('grunt-contrib-watch');
+
+3 - Adicione dentro de grunt.initConfig:
+    watch: {
+        styles: {
+            files: ['src/styles/**/*.less'],
+            tasks: ['less:development'],
+            options: { spawn: false }
+        },
+        html: {
+            files: ['src/index.html'],
+            tasks: ['replace:dev'],
+            options: { spawn: false }
+        }
+    }
+
+4 - Configure a task default:
+    grunt.registerTask('default', ['watch']);
+
+────────────────────────────────────
+PLUGIN: REPLACE (substitui padrões no HTML)
+
+1 - Instale o plugin:
+    npm install --save-dev grunt-replace
+
+2 - Carregue o plugin:
+    grunt.loadNpmTasks('grunt-replace');
+
+3 - Adicione em grunt.initConfig:
+    replace: {
+        dev: {
+            options: {
+                patterns: [
+                    { match: 'ENDERECO_DO_CSS', replacement: './styles/main.css' },
+                    { match: 'ENDERECO_DO_JS', replacement: '../src/scripts/main.js' }
+                ]
+            },
+            files: [
+                {
+                    expand: true,
+                    flatten: true,
+                    src: ['src/index.html'],
+                    dest: 'dev/'
+                }
+            ]
+        },
+        dist: {
+            options: {
+                patterns: [
+                    { match: 'ENDERECO_DO_CSS', replacement: './styles/main.min.css' },
+                    { match: 'ENDERECO_DO_JS', replacement: './scripts/main.min.js' }
+                ]
+            },
+            files: [
+                {
+                    expand: true,
+                    flatten: true,
+                    src: ['prebuild/index.html'],
+                    dest: 'dist/'
+                }
+            ]
+        }
+    }
+
+4 - No HTML, use os marcadores:
+    <link rel="stylesheet" href="@@ENDERECO_DO_CSS">
+    <script src="@@ENDERECO_DO_JS"></script>
+
+────────────────────────────────────
+PLUGIN: HTMLMIN (minifica o HTML para produção)
+
+1 - Instale o plugin:
+    npm install --save-dev grunt-contrib-htmlmin
+
+2 - Carregue o plugin:
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+
+3 - Adicione em grunt.initConfig:
+    htmlmin: {
+        dist: {
+            options: {
+                removeComments: true,
+                collapseWhitespace: true
+            },
+            files: {
+                'prebuild/index.html': 'src/index.html'
+            }
+        }
+    }
+
+────────────────────────────────────
+PLUGIN: CLEAN (limpa pastas antes/depois do build)
+
+1 - Instale o plugin:
+    npm install --save-dev grunt-contrib-clean
+
+2 - Carregue o plugin:
+    grunt.loadNpmTasks('grunt-contrib-clean');
+
+3 - Adicione em grunt.initConfig:
+    clean: {
+        build: ['dist/', 'dev/', 'prebuild/'],
+        postbuild: ['prebuild/']
+    }
+
+────────────────────────────────────
+PLUGIN: UGLIFY (minifica JS para produção)
+
+1 - Instale o plugin:
+    npm install --save-dev grunt-contrib-uglify
+
+2 - Carregue o plugin:
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+
+3 - Adicione em grunt.initConfig:
+    uglify: {
+        dist: {
+            files: {
+                'dist/scripts/main.min.js': ['src/scripts/main.js']
+            }
+        }
+    }
+
+────────────────────────────────────
+TAREFAS DISPONÍVEIS
+
+- Desenvolvimento:
+    npm run grunt
+
+- Build completo para produção:
+    npm run build
+-->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="@@ENDERECO_DO_CSS">
+</head>
+<body>
+    <main>
+        <h1>Sorteador</h1>
+        <form id="form-sorteador">
+            <div>
+                <label for="numero-maximo">Número máximo</label>
+                <input type="number" id="numero-maximo" required min="2" value="2" step="1">
+            </div>
+            <button type="submit">Sortear número</button>
+        </form>
+        <div class="resultado">
+            O número sorteado foi: <span id="resultado-valor"></span>
+        </div>
+    </main>
+    <script src="@@ENDERECO_DO_JS"></script>
+</body>
+</html>
