@@ -52,10 +52,12 @@ O foco foi implementar o layout e as funcionalidades básicas, além de configur
 ---
 
 ## 💻 Demonstração
-
-💡 Projeto focado em automação e desenvolvimento local.  
+💡 Projeto focado em automação e desenvolvimento local.
 Para rodar o projeto localmente:
-```bash
+
+bash
+Copiar
+Editar
 npm install
 npm run grunt       # Para desenvolvimento com watch ativo
 npm run build       # Para build otimizado de produção
