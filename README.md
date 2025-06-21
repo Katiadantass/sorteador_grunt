@@ -63,6 +63,5 @@ npm run build       # Para build otimizado de produção
 
 ---
 
-## 🙋 Autora
-
-Katiadantass
+## 🙋 Autora  
+[Katiadantass](https://github.com/Katiadantass)
